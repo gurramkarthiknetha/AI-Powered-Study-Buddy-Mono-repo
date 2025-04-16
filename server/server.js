@@ -3,7 +3,12 @@ import cors from 'cors';
 import { connectToDB, mongoose } from './db.js';
 import dotenv from 'dotenv';
 import studentsRouter from './api/students.js';
-import themesRouter from './api/themes.js';
+import studyPlanRouter from './api/studyplan.js';
+import pomodoroRouter from './api/pomodoro.js';
+import performanceRouter from './api/performance.js';
+import gamificationRouter from './api/gamification.js';
+import flashcardRouter from './api/flashcard.js';
+import chatbotRouter from './api/chatbot.js';
 
 dotenv.config();
 
@@ -26,7 +31,12 @@ app.get('/', (req, res) => {
 
 // Mount the routers
 app.use('/api/students', studentsRouter);
-app.use('/api/themes', themesRouter);
+app.use('/api/study-plans', studyPlanRouter);
+app.use('/api/pomodoro', pomodoroRouter);
+app.use('/api/performance', performanceRouter);
+app.use('/api/gamification', gamificationRouter);
+app.use('/api/flashcards', flashcardRouter);
+app.use('/api/chatbot', chatbotRouter);
 
 // Initialize DB and start server
 connectToDB().then(() => {
