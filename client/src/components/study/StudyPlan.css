@@ -1,0 +1,59 @@
+.study-plan {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.plan-form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.plan-form input {
+  flex: 1;
+}
+
+.plans-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.plan-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.plan-card h3 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color);
+}
+
+.subjects {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.subject-item {
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.subject-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-color);
+}
+
+.subject-item p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}

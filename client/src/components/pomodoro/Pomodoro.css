@@ -1,0 +1,64 @@
+.pomodoro {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.timer-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.timer {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin: 2rem 0;
+}
+
+button.start {
+  background-color: var(--success-color);
+  font-size: 1.2rem;
+  padding: 0.75rem 2rem;
+}
+
+button.stop {
+  background-color: var(--error-color);
+  font-size: 1.2rem;
+  padding: 0.75rem 2rem;
+}
+
+.distraction-blocker {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.distraction-blocker input {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.sessions-history {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.session-card {
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.session-card p {
+  margin: 0.25rem 0;
+  color: var(--text-color);
+}

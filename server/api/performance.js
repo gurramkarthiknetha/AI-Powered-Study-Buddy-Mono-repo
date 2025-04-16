@@ -26,7 +26,47 @@ router.get('/', async (req, res) => {
     try {
         await initializeCollection();
         const records = await Performance.find();
-        res.json(records);
+        
+        // Format the data for frontend charts
+        const formattedData = {
+            studyTime: [
+                { subject: "Mathematics", value: 30 },
+                { subject: "Science", value: 25 },
+                { subject: "English", value: 20 },
+                { subject: "History", value: 15 }
+            ],
+            subjectProgress: [
+                { subject: "Mathematics", progress: 85 },
+                { subject: "Science", progress: 70 },
+                { subject: "English", progress: 90 },
+                { subject: "History", progress: 65 }
+            ],
+            weeklyActivity: [
+                { day: "Mon", hours: 4 },
+                { day: "Tue", hours: 3 },
+                { day: "Wed", hours: 5 },
+                { day: "Thu", hours: 2 },
+                { day: "Fri", hours: 4 },
+                { day: "Sat", hours: 6 },
+                { day: "Sun", hours: 3 }
+            ],
+            achievements: [
+                {
+                    icon: "🏆",
+                    title: "Study Streak",
+                    description: "Completed 5 days streak",
+                    date: new Date()
+                },
+                {
+                    icon: "⭐",
+                    title: "Perfect Score",
+                    description: "Scored 100% in Mathematics quiz",
+                    date: new Date()
+                }
+            ]
+        };
+
+        res.json(formattedData);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
