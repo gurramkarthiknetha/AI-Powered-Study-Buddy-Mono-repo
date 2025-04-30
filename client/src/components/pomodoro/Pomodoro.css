@@ -1,22 +1,109 @@
 .pomodoro {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.pomodoro-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pomodoro-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .timer-container {
-  background: white;
+  background: var(--card-background);
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
   text-align: center;
-  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.timer-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--primary-color);
+}
+
+.timer-type-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.timer-type-button {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: none;
+}
+
+.timer-type-button.active {
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .timer {
-  font-size: 4rem;
+  font-size: 5rem;
   font-weight: bold;
   color: var(--primary-color);
-  margin: 2rem 0;
+  margin: 1.5rem 0;
+  position: relative;
+  display: inline-block;
+}
+
+.timer-circle {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+}
+
+.timer-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.timer-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.timer-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 button.start {
@@ -31,34 +118,225 @@ button.stop {
   padding: 0.75rem 2rem;
 }
 
-.distraction-blocker {
-  background: white;
+button.reset {
+  background-color: var(--border-color);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  padding: 0.75rem 2rem;
+}
+
+.timer-settings {
+  background: var(--card-background);
   padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.timer-settings h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.setting-item {
+  margin-bottom: 1rem;
+}
+
+.setting-item label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.setting-item input {
+  width: 100%;
+  padding: 0.75rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.setting-item select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.distraction-blocker {
+  background: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.distraction-blocker h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
 }
 
 .distraction-blocker input {
   width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.task-association {
+  background: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.task-association h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.task-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.task-input input {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: var(--background-color);
+  margin-bottom: 0.5rem;
+}
+
+.task-item input[type="checkbox"] {
+  margin-right: 0.75rem;
+}
+
+.task-item.completed span {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.ambient-sounds {
+  background: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.ambient-sounds h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.sound-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.sound-option {
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: var(--background-color);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sound-option:hover {
+  transform: translateY(-2px);
+}
+
+.sound-option.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.volume-control {
+  margin-top: 1rem;
+}
+
+.volume-control label {
+  display: block;
   margin-bottom: 0.5rem;
 }
 
 .sessions-history {
-  background: white;
+  background: var(--card-background);
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.sessions-history h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
 }
 
 .session-card {
   border: 1px solid var(--border-color);
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: 8px;
   margin-bottom: 1rem;
+  background-color: var(--background-color);
+  transition: transform 0.2s;
+}
+
+.session-card:hover {
+  transform: translateY(-2px);
 }
 
 .session-card p {
   margin: 0.25rem 0;
   color: var(--text-color);
+}
+
+.session-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .pomodoro {
+    grid-template-columns: 1fr;
+  }
 }

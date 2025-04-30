@@ -3,6 +3,57 @@
   margin: 0 auto;
 }
 
+.dashboard h1 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.dashboard h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+.welcome-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.welcome-text {
+  flex: 1;
+}
+
+.welcome-text h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.welcome-text p {
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.welcome-image {
+  width: 200px;
+  height: 200px;
+  margin-left: 2rem;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
 .quick-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -11,11 +62,29 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--card-background);
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
   text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--primary-color);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px var(--shadow-color);
 }
 
 .stat-card h3 {
@@ -24,65 +93,141 @@
 }
 
 .stat-card p {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: var(--primary-color);
   margin: 0.5rem 0;
 }
 
 .stat-card a {
+  display: inline-block;
+  margin-top: 0.5rem;
   color: var(--primary-color);
   text-decoration: none;
   font-size: 0.9rem;
+  font-weight: 500;
+  transition: transform 0.2s;
+}
+
+.stat-card a:hover {
+  transform: translateX(5px);
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .feature-card {
-  background: white;
+  background: var(--card-background);
   padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow-color);
   text-decoration: none;
   color: var(--text-color);
-  transition: transform 0.2s;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary-color);
+  transition: width 0.3s;
 }
 
 .feature-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-8px);
+  border-color: var(--primary-color);
+}
+
+.feature-card:hover::before {
+  width: 100%;
+  height: 4px;
 }
 
 .feature-card h3 {
   margin: 0 0 0.5rem 0;
   color: var(--primary-color);
+  font-size: 1.3rem;
+  position: relative;
+  z-index: 1;
 }
 
 .feature-card p {
   margin: 0;
   color: var(--text-color);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 1;
 }
 
 .streak-banner {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   padding: 1.5rem;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: center;
   margin-top: 2rem;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.streak-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+  background-size: 20px 20px;
+  opacity: 0.2;
 }
 
 .streak-banner h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .streak-banner p {
   margin: 0;
   opacity: 0.9;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .welcome-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .welcome-image {
+    margin-left: 0;
+    margin-top: 1rem;
+    width: 150px;
+    height: 150px;
+  }
+
+  .dashboard h1::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .dashboard h1 {
+    display: block;
+    text-align: center;
+  }
 }
