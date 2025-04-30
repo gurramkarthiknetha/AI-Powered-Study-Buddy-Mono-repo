@@ -9,13 +9,13 @@ import performanceRouter from './api/performance.js';
 import gamificationRouter from './api/gamification.js';
 import flashcardRouter from './api/flashcard.js';
 import chatbotRouter from './api/chatbot.js';
+import authRouter from './api/auth.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Enable CORS with more permissive settings
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 });
 
 // Mount the routers
+app.use('/api/auth', authRouter);
 app.use('/api/students', studentsRouter);
 app.use('/api/study-plans', studyPlanRouter);
 app.use('/api/pomodoro', pomodoroRouter);

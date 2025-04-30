@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import Navbar from './components/layout/Navbar';
+import Profile from './components/profile/Profile';
 import Dashboard from './components/Dashboard';
 import StudyPlan from './components/study/StudyPlan';
 import Pomodoro from './components/pomodoro/Pomodoro';
@@ -10,24 +12,84 @@ import Gamification from './components/gamification/Gamification';
 import Chatbot from './components/chatbot/Chatbot';
 import './App.css';
 
-function App() {
+const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+
+function PrivateRoute({ children }) {
   return (
-    <Router>
-      <div className="app">
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/study-plan" element={<StudyPlan />} />
-            <Route path="/pomodoro" element={<Pomodoro />} />
-            <Route path="/flashcards" element={<Flashcards />} />
-            <Route path="/performance" element={<Performance />} />
-            <Route path="/gamification" element={<Gamification />} />
-            <Route path="/chatbot" element={<Chatbot />} />
-          </Routes>
-        </main>
+    <>
+      <SignedIn>{children}</SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  );
+}
+
+function App() {
+  if (!clerkPubKey) {
+    return (
+      <div style={{ padding: '20px', color: 'red' }}>
+        <h1>Configuration Error</h1>
+        <p>Clerk publishable key is missing. Please check your environment configuration.</p>
       </div>
-    </Router>
+    );
+  }
+
+  return (
+    <ClerkProvider publishableKey={clerkPubKey}>
+      <Router>
+        <div className="app">
+          <SignedIn>
+            <Navbar />
+          </SignedIn>
+          <main className="main-content">
+            <Routes>
+              <Route path="/sign-in/*" element={<SignedOut><RedirectToSignIn /></SignedOut>} />
+              <Route path="/" element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } />
+              <Route path="/profile" element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              } />
+              <Route path="/study-plan" element={
+                <PrivateRoute>
+                  <StudyPlan />
+                </PrivateRoute>
+              } />
+              <Route path="/pomodoro" element={
+                <PrivateRoute>
+                  <Pomodoro />
+                </PrivateRoute>
+              } />
+              <Route path="/flashcards" element={
+                <PrivateRoute>
+                  <Flashcards />
+                </PrivateRoute>
+              } />
+              <Route path="/performance" element={
+                <PrivateRoute>
+                  <Performance />
+                </PrivateRoute>
+              } />
+              <Route path="/gamification" element={
+                <PrivateRoute>
+                  <Gamification />
+                </PrivateRoute>
+              } />
+              <Route path="/chatbot" element={
+                <PrivateRoute>
+                  <Chatbot />
+                </PrivateRoute>
+              } />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </ClerkProvider>
   );
 }
 
