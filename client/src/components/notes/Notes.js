@@ -13,11 +13,13 @@ const Notes = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Mock data - in a real app, this would be fetched from an API
     const mockNotes = [
-      { id: 1, title: 'Math Formulas', content: '# Math Formulas\n\n- Quadratic Formula: $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$\n- Pythagorean Theorem: $a^2 + b^2 = c^2$', folder: 'Math', createdAt: new Date('2023-05-15') },
-      { id: 2, title: 'Physics Notes', content: '# Physics Laws\n\n1. Newton\'s First Law: An object at rest stays at rest, and an object in motion stays in motion unless acted upon by an external force.\n\n2. Newton\'s Second Law: $F = ma$', folder: 'Science', createdAt: new Date('2023-05-20') },
+      { id: 1, title: 'Math Formulas', content: '# Math Formulas\n\n- Quadratic Formula: $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$\n- Pythagorean Theorem: $a^2 + b^2 = c^2$\n- Circle Area: $A = \\pi r^2$\n- Logarithm Rules: $\\log(xy) = \\log(x) + \\log(y)$', folder: 'Math', createdAt: new Date('2023-05-15') },
+      { id: 2, title: 'Physics Laws', content: '# Physics Laws\n\n1. Newton\'s First Law: An object at rest stays at rest, and an object in motion stays in motion unless acted upon by an external force.\n\n2. Newton\'s Second Law: $F = ma$\n\n3. Newton\'s Third Law: For every action, there is an equal and opposite reaction.\n\n4. Conservation of Energy: Energy cannot be created or destroyed, only transformed.', folder: 'Science', createdAt: new Date('2023-05-20') },
       { id: 3, title: 'Study Schedule', content: '# Weekly Schedule\n\n- Monday: Math (2 hours)\n- Tuesday: Science (2 hours)\n- Wednesday: History (1.5 hours)\n- Thursday: Math (2 hours)\n- Friday: Science (2 hours)', folder: 'General', createdAt: new Date('2023-05-25') },
+      { id: 4, title: 'World War II', content: '# World War II Key Events\n\n1. 1939: Germany invades Poland\n2. 1941: Pearl Harbor Attack\n3. 1944: D-Day Invasion\n4. 1945: Victory in Europe\n5. 1945: Atomic bombs dropped on Japan', folder: 'History', createdAt: new Date('2023-06-01') },
+      { id: 5, title: 'Chemical Reactions', content: '# Types of Chemical Reactions\n\n1. Synthesis Reactions: A + B → AB\n2. Decomposition Reactions: AB → A + B\n3. Single Displacement: A + BC → AC + B\n4. Double Displacement: AB + CD → AD + CB\n5. Combustion: Fuel + O₂ → CO₂ + H₂O', folder: 'Science', createdAt: new Date('2023-06-05') },
+      { id: 6, title: 'Calculus Notes', content: '# Calculus Fundamentals\n\n## Derivatives\n- Power Rule: $\\frac{d}{dx}(x^n) = nx^{n-1}$\n- Product Rule: $\\frac{d}{dx}(uv) = u\\frac{dv}{dx} + v\\frac{du}{dx}$\n\n## Integrals\n- Power Rule: $\\int x^n dx = \\frac{x^{n+1}}{n+1} + C$\n- Basic Integrals: $\\int e^x dx = e^x + C$', folder: 'Math', createdAt: new Date('2023-06-10') }
     ];
     setNotes(mockNotes);
   }, []);

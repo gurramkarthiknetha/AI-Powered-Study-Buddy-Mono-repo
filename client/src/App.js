@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { UserProvider } from './contexts/UserContext';
 import Navbar from './components/layout/Navbar';
 import Profile from './components/profile/Profile';
 import Dashboard from './components/Dashboard';
@@ -11,20 +12,18 @@ import Notes from './components/notes/Notes';
 import Performance from './components/performance/Performance';
 import Gamification from './components/gamification/Gamification';
 import Chatbot from './components/chatbot/Chatbot';
-import ThemeToggle from './components/layout/ThemeToggle';
+import Login from './auth/login';
+import Register from './auth/register';
 import './App.css';
 
-const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
-
 function PrivateRoute({ children }) {
-  return (
-    <>
-      <SignedIn>{children}</SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </>
-  );
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
+
+  return currentUser ? children : <Navigate to="/login" />;
 }
 
 function App() {
@@ -39,75 +38,46 @@ function App() {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  if (!clerkPubKey) {
-    return (
-      <div style={{ padding: '20px', color: 'red' }}>
-        <h1>Configuration Error</h1>
-        <p>Clerk publishable key is missing. Please check your environment configuration.</p>
-      </div>
-    );
-  }
-
   return (
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <Router>
-        <div className="app">
-          <SignedIn>
-            <Navbar theme={theme} toggleTheme={toggleTheme} />
-          </SignedIn>
-          <main className="main-content">
+    <AuthProvider>
+      <UserProvider>
+        <Router>
+          <div className="app">
             <Routes>
-              <Route path="/sign-in/*" element={<SignedOut><RedirectToSignIn /></SignedOut>} />
-              <Route path="/" element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              } />
-              <Route path="/profile" element={
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              } />
-              <Route path="/study-plan" element={
-                <PrivateRoute>
-                  <StudyPlan />
-                </PrivateRoute>
-              } />
-              <Route path="/pomodoro" element={
-                <PrivateRoute>
-                  <Pomodoro />
-                </PrivateRoute>
-              } />
-              <Route path="/flashcards" element={
-                <PrivateRoute>
-                  <Flashcards />
-                </PrivateRoute>
-              } />
-              <Route path="/notes" element={
-                <PrivateRoute>
-                  <Notes />
-                </PrivateRoute>
-              } />
-              <Route path="/performance" element={
-                <PrivateRoute>
-                  <Performance />
-                </PrivateRoute>
-              } />
-              <Route path="/gamification" element={
-                <PrivateRoute>
-                  <Gamification />
-                </PrivateRoute>
-              } />
-              <Route path="/chatbot" element={
-                <PrivateRoute>
-                  <Chatbot />
-                </PrivateRoute>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/*" element={
+                <PrivateRouteWrapper>
+                  <Navbar theme={theme} toggleTheme={toggleTheme} />
+                  <main className="main-content">
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/study-plan" element={<StudyPlan />} />
+                      <Route path="/pomodoro" element={<Pomodoro />} />
+                      <Route path="/flashcards" element={<Flashcards />} />
+                      <Route path="/notes" element={<Notes />} />
+                      <Route path="/performance" element={<Performance />} />
+                      <Route path="/gamification" element={<Gamification />} />
+                      <Route path="/chatbot" element={<Chatbot />} />
+                    </Routes>
+                  </main>
+                </PrivateRouteWrapper>
               } />
             </Routes>
-          </main>
-        </div>
-      </Router>
-    </ClerkProvider>
+          </div>
+        </Router>
+      </UserProvider>
+    </AuthProvider>
+  );
+}
+
+// Wrapper component to handle private routes
+function PrivateRouteWrapper({ children }) {
+  return (
+    <PrivateRoute>
+      {children}
+    </PrivateRoute>
   );
 }
 

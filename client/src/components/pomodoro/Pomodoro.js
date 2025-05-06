@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
-import { FaPlay, FaPause, FaRedo, FaPlus, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { FaPlay, FaPause, FaRedo, FaPlus, FaVolumeUp, FaVolumeMute, FaMusic, FaHeadphones } from 'react-icons/fa';
+import { MdOutlineWaves, MdNature, MdCoffee, MdPiano, MdMusicNote } from 'react-icons/md';
 import './Pomodoro.css';
 
 const Pomodoro = () => {
@@ -30,6 +31,7 @@ const Pomodoro = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [selectedSound, setSelectedSound] = useState('none');
   const [volume, setVolume] = useState(50);
+  const [musicCategory, setMusicCategory] = useState('ambient'); // ambient, focus, nature
 
   // Refs
   const audioRef = useRef(null);
@@ -43,6 +45,28 @@ const Pomodoro = () => {
 
     // Initialize audio
     audioRef.current = new Audio();
+
+    // Load saved music preferences from localStorage
+    const savedMusicCategory = localStorage.getItem('musicCategory');
+    const savedSelectedSound = localStorage.getItem('selectedSound');
+    const savedVolume = localStorage.getItem('musicVolume');
+    const savedSoundEnabled = localStorage.getItem('soundEnabled');
+
+    if (savedMusicCategory) {
+      setMusicCategory(savedMusicCategory);
+    }
+
+    if (savedSelectedSound) {
+      setSelectedSound(savedSelectedSound);
+    }
+
+    if (savedVolume) {
+      setVolume(parseInt(savedVolume));
+    }
+
+    if (savedSoundEnabled !== null) {
+      setSoundEnabled(savedSoundEnabled === 'true');
+    }
 
     return () => {
       if (audioRef.current) {
@@ -60,29 +84,66 @@ const Pomodoro = () => {
     } else if (timerType === 'longBreak') {
       setTimeLeft(settings.longBreak * 60);
     }
-  }, [timerType, settings]);
+}, [timerType, settings]);
 
   useEffect(() => {
     // Update audio source when sound changes
-    if (audioRef.current && selectedSound !== 'none') {
+    if (selectedSound !== 'none') {
       const soundMap = {
+        // Ambient sounds
         whitenoise: '/sounds/whitenoise.mp3',
         rain: '/sounds/rain.mp3',
         cafe: '/sounds/cafe.mp3',
-        forest: '/sounds/forest.mp3'
+        forest: '/sounds/forest.mp3',
+        // Focus music
+        lofi: '/sounds/lofi.mp3',
+        classical: '/sounds/classical.mp3',
+        piano: '/sounds/piano.mp3',
+        jazz: '/sounds/jazz.mp3',
+        // Nature sounds
+        ocean: '/sounds/ocean.mp3',
+        birds: '/sounds/birds.mp3',
+        creek: '/sounds/creek.mp3',
+        campfire: '/sounds/campfire.mp3'
       };
 
-      audioRef.current.src = soundMap[selectedSound] || '';
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+      }
+
+      const soundUrl = process.env.PUBLIC_URL + soundMap[selectedSound];
+      if (audioRef.current.src !== soundUrl) {
+        audioRef.current.src = soundUrl;
+        audioRef.current.load();
+      }
+      
       audioRef.current.loop = true;
       audioRef.current.volume = volume / 100;
 
       if (isActive && soundEnabled) {
-        audioRef.current.play().catch(e => console.error('Error playing audio:', e));
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.warn("Audio playback error:", error);
+          });
+        }
       } else {
         audioRef.current.pause();
       }
+    } else if (audioRef.current) {
+      audioRef.current.pause();
     }
+
+    // Save music preferences to localStorage
+    localStorage.setItem('selectedSound', selectedSound);
+    localStorage.setItem('musicVolume', volume.toString());
+    localStorage.setItem('soundEnabled', soundEnabled.toString());
   }, [selectedSound, isActive, soundEnabled, volume]);
+
+  // Save music category when it changes
+  useEffect(() => {
+    localStorage.setItem('musicCategory', musicCategory);
+  }, [musicCategory]);
 
   const fetchSessions = async () => {
     try {
@@ -95,8 +156,16 @@ const Pomodoro = () => {
 
   const handleSessionComplete = useCallback(async () => {
     // Play notification sound
-    const notification = new Audio('/sounds/notification.mp3');
-    notification.play().catch(e => console.error('Error playing notification:', e));
+    if (soundEnabled) {
+      const notification = new Audio(process.env.PUBLIC_URL + '/sounds/notification.mp3');
+      notification.volume = volume / 100;
+      const playPromise = notification.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.warn("Notification sound error:", error);
+        });
+      }
+    }
 
     setIsActive(false);
 
@@ -150,7 +219,7 @@ const Pomodoro = () => {
     } catch (error) {
       console.error('Error saving session:', error);
     }
-  }, [timerType, settings, currentTask, tasks, blockedSites]);
+  }, [timerType, settings, currentTask, tasks, blockedSites, soundEnabled, volume]);
 
   useEffect(() => {
     let interval = null;
@@ -166,10 +235,13 @@ const Pomodoro = () => {
 
   const startTimer = () => {
     setIsActive(true);
-
-    // Start audio if enabled
     if (audioRef.current && soundEnabled && selectedSound !== 'none') {
-      audioRef.current.play().catch(e => console.error('Error playing audio:', e));
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.warn("Audio playback error:", error);
+        });
+      }
     }
   };
 
@@ -408,7 +480,29 @@ const Pomodoro = () => {
         </div>
 
         <div className="ambient-sounds">
-          <h3>Ambient Sounds</h3>
+          <h3>Study Music & Sounds</h3>
+
+          <div className="music-categories">
+            <button
+              className={`category-button ${musicCategory === 'ambient' ? 'active' : ''}`}
+              onClick={() => setMusicCategory('ambient')}
+            >
+              <MdOutlineWaves /> Ambient
+            </button>
+            <button
+              className={`category-button ${musicCategory === 'focus' ? 'active' : ''}`}
+              onClick={() => setMusicCategory('focus')}
+            >
+              <FaHeadphones /> Focus Music
+            </button>
+            <button
+              className={`category-button ${musicCategory === 'nature' ? 'active' : ''}`}
+              onClick={() => setMusicCategory('nature')}
+            >
+              <MdNature /> Nature
+            </button>
+          </div>
+
           <div className="sound-options">
             <div
               className={`sound-option ${selectedSound === 'none' ? 'active' : ''}`}
@@ -416,25 +510,95 @@ const Pomodoro = () => {
             >
               None
             </div>
-            <div
-              className={`sound-option ${selectedSound === 'whitenoise' ? 'active' : ''}`}
-              onClick={() => setSelectedSound('whitenoise')}
-            >
-              White Noise
-            </div>
-            <div
-              className={`sound-option ${selectedSound === 'rain' ? 'active' : ''}`}
-              onClick={() => setSelectedSound('rain')}
-            >
-              Rain
-            </div>
-            <div
-              className={`sound-option ${selectedSound === 'cafe' ? 'active' : ''}`}
-              onClick={() => setSelectedSound('cafe')}
-            >
-              Cafe
-            </div>
+
+            {musicCategory === 'ambient' && (
+              <>
+                <div
+                  className={`sound-option ${selectedSound === 'whitenoise' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('whitenoise')}
+                >
+                  <MdOutlineWaves /> White Noise
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'rain' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('rain')}
+                >
+                  <MdOutlineWaves /> Rain
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'cafe' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('cafe')}
+                >
+                  <MdCoffee /> Cafe
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'forest' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('forest')}
+                >
+                  <MdNature /> Forest
+                </div>
+              </>
+            )}
+
+            {musicCategory === 'focus' && (
+              <>
+                <div
+                  className={`sound-option ${selectedSound === 'lofi' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('lofi')}
+                >
+                  <FaMusic /> Lo-Fi
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'classical' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('classical')}
+                >
+                  <MdMusicNote /> Classical
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'piano' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('piano')}
+                >
+                  <MdPiano /> Piano
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'jazz' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('jazz')}
+                >
+                  <FaMusic /> Jazz
+                </div>
+              </>
+            )}
+
+            {musicCategory === 'nature' && (
+              <>
+                <div
+                  className={`sound-option ${selectedSound === 'ocean' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('ocean')}
+                >
+                  <MdOutlineWaves /> Ocean
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'birds' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('birds')}
+                >
+                  <MdNature /> Birds
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'creek' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('creek')}
+                >
+                  <MdOutlineWaves /> Creek
+                </div>
+                <div
+                  className={`sound-option ${selectedSound === 'campfire' ? 'active' : ''}`}
+                  onClick={() => setSelectedSound('campfire')}
+                >
+                  <MdNature /> Campfire
+                </div>
+              </>
+            )}
           </div>
+
           <div className="volume-control">
             <label>
               Volume: {volume}%
@@ -454,6 +618,11 @@ const Pomodoro = () => {
               onChange={(e) => setVolume(parseInt(e.target.value))}
               style={{ width: '100%' }}
             />
+          </div>
+
+          <div className="music-info">
+            <p>Music will automatically play when you start the timer and pause when you stop.</p>
+            <p>Your music preference will be saved for future sessions.</p>
           </div>
         </div>
       </div>

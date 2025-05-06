@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useUser, SignOutButton } from "@clerk/clerk-react";
+import { useUser } from "../../contexts/UserContext";
+import { useAuth } from "../../contexts/AuthContext";
 import ThemeToggle from './ThemeToggle';
 import './Navbar.css';
 import {
@@ -20,6 +21,7 @@ import {
 const Navbar = ({ theme, toggleTheme }) => {
   const location = useLocation();
   const { user } = useUser();
+  const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
@@ -38,8 +40,8 @@ const Navbar = ({ theme, toggleTheme }) => {
       </div>
 
       <div className="nav-profile">
-        <img src={user?.imageUrl || user?.profileImageUrl} alt="Profile" className="profile-pic" />
-        <h3>{user?.fullName}</h3>
+        <img src={user?.profileImageUrl || "https://via.placeholder.com/150"} alt="Profile" className="profile-pic" />
+        <h3>{user?.name || "User"}</h3>
         <div className="desktop-theme-toggle">
           <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
         </div>
@@ -73,11 +75,9 @@ const Navbar = ({ theme, toggleTheme }) => {
       </ul>
 
       <div className="nav-footer">
-        <SignOutButton>
-          <button className="sign-out-button">
-            <FaSignOutAlt /> Sign Out
-          </button>
-        </SignOutButton>
+        <button className="sign-out-button" onClick={logout}>
+          <FaSignOutAlt /> Sign Out
+        </button>
       </div>
     </nav>
   );

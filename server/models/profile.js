@@ -6,6 +6,16 @@ const profileSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  profileImage: {
+    url: {
+      type: String,
+      default: ""
+    },
+    publicId: {
+      type: String,
+      default: ""
+    }
+  },
   bio: {
     type: String,
     maxLength: 500
@@ -26,7 +36,13 @@ const profileSchema = new mongoose.Schema({
   },
   studySchedule: {
     preferredTime: String,
-    weeklyHours: Number
+    weeklyHours: Number,
+    preferredDays: [String],
+    reminderEnabled: {
+      type: Boolean,
+      default: false
+    },
+    reminderTime: String
   },
   achievements: [{
     title: String,
@@ -36,7 +52,48 @@ const profileSchema = new mongoose.Schema({
   socialLinks: {
     linkedin: String,
     github: String,
-    twitter: String
+    twitter: String,
+    instagram: String,
+    website: String
+  },
+  preferences: {
+    theme: {
+      type: String,
+      enum: ['light', 'dark', 'system'],
+      default: 'system'
+    },
+    accentColor: {
+      type: String,
+      default: '#4a6cf7'
+    },
+    notifications: {
+      studyReminders: {
+        type: Boolean,
+        default: true
+      },
+      achievements: {
+        type: Boolean,
+        default: true
+      },
+      messages: {
+        type: Boolean,
+        default: true
+      }
+    },
+    privacy: {
+      showProfileToOthers: {
+        type: Boolean,
+        default: true
+      },
+      showProgressToOthers: {
+        type: Boolean,
+        default: true
+      },
+      showAchievementsToOthers: {
+        type: Boolean,
+        default: true
+      }
+    }
   },
   createdAt: {
     type: Date,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import './auth.css';
 
 function Register() {
@@ -10,7 +10,9 @@ function Register() {
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { register, error } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,26 +20,31 @@ function Register() {
       ...formData,
       [e.target.name]: e.target.value
     });
+
+    // Clear password error when user types in password fields
+    if (e.target.name === 'password' || e.target.name === 'confirmPassword') {
+      setPasswordError('');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setPasswordError('Passwords do not match');
       return;
     }
 
+    setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data.userId);
-      navigate('/dashboard');
+      await register(formData.name, formData.email, formData.password);
+      navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      // Error is handled by the AuthContext
+      console.error('Registration error:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,9 +53,10 @@ function Register() {
       <div className="auth-card">
         <h2>Create Account</h2>
         <p>Join us to start your learning journey</p>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+        {passwordError && <div className="error-message">{passwordError}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Full Name</label>
@@ -60,7 +68,7 @@ function Register() {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label>Email</label>
             <input
@@ -71,7 +79,7 @@ function Register() {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label>Password</label>
             <input
@@ -83,7 +91,7 @@ function Register() {
               minLength="6"
             />
           </div>
-          
+
           <div className="form-group">
             <label>Confirm Password</label>
             <input
@@ -95,10 +103,16 @@ function Register() {
               minLength="6"
             />
           </div>
-          
-          <button type="submit" className="auth-button">Register</button>
+
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Creating Account...' : 'Register'}
+          </button>
         </form>
-        
+
         <p className="auth-link">
           Already have an account? <Link to="/login">Login here</Link>
         </p>

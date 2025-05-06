@@ -10,13 +10,72 @@
   position: relative;
 }
 
-.profile-image {
+.profile-image-container {
+  position: relative;
   width: 150px;
   height: 150px;
+  margin: 0 auto 1rem;
   border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  border-radius: 50%;
   border: 4px solid var(--primary-color);
-  margin-bottom: 1rem;
+}
+
+.image-upload-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.image-upload-button,
+.image-delete-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.image-upload-button:hover,
+.image-delete-button:hover {
+  transform: scale(1.1);
+}
+
+.image-delete-button {
+  background-color: #dc3545;
+}
+
+.image-upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
 }
 
 .edit-button {
@@ -73,8 +132,47 @@
   outline: none;
 }
 
+.profile-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  margin: 0 0.25rem;
+  font-size: 1rem;
+  color: var(--text-color);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.tab-button:hover {
+  color: var(--primary-color);
+}
+
+.tab-button.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary-color);
+}
+
 .social-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -85,10 +183,114 @@
   background: #f0f4ff;
   border-radius: 20px;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .social-links a:hover {
   background: #e0e7ff;
+  transform: translateY(-2px);
+}
+
+.input-with-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  background: #f9f9f9;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  padding: 0 0.75rem;
+}
+
+.input-with-icon .input-icon {
+  color: #666;
+  margin-right: 0.75rem;
+}
+
+.input-with-icon input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.75rem 0;
+  margin: 0;
+}
+
+.input-with-icon input:focus {
+  outline: none;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 0;
+}
+
+.days-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.days-list li {
+  background: #f0f4ff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  border: none;
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.color-picker input[type="color"] {
+  width: 50px;
+  height: 30px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.color-sample {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  border: 1px solid #ddd;
+}
+
+.preferences-list {
+  list-style: none;
+  padding: 0;
+}
+
+.preferences-list li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
 }
 
 .save-button {
@@ -108,6 +310,21 @@
 
 .save-button:hover {
   background-color: #357abd;
+}
+
+.save-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
 }
 
 ul {

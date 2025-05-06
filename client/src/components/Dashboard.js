@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "../contexts/UserContext";
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import './Dashboard.css';
 
@@ -59,13 +59,13 @@ const Dashboard = () => {
 
       <div className="welcome-section">
         <div className="welcome-text">
-          <h2>{getGreeting()}, {user?.firstName || 'Student'}!</h2>
+          <h2>{getGreeting()}, {user?.name?.split(' ')[0] || 'Student'}!</h2>
           <p>Today is {formatDate()}</p>
           <p>You have {upcomingEvents.length} upcoming events and {summary.activeStudyPlans} active study plans.</p>
           <Link to="/study-plan" className="btn">View Your Schedule</Link>
         </div>
         <img
-          src={user?.imageUrl || user?.profileImageUrl || "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"}
+          src={user?.profileImageUrl || "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"}
           alt="Profile"
           className="welcome-image"
         />

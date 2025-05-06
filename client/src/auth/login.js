@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import './auth.css';
 
 function Login() {
@@ -8,7 +8,8 @@ function Login() {
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, error } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,13 +21,15 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login', formData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data.userId);
-      navigate('/dashboard');
+      await login(formData.email, formData.password);
+      navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      // Error is handled by the AuthContext
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -35,9 +38,9 @@ function Login() {
       <div className="auth-card">
         <h2>Welcome Back!</h2>
         <p>Login to continue your learning journey</p>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Email</label>
@@ -49,7 +52,7 @@ function Login() {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label>Password</label>
             <input
@@ -60,10 +63,16 @@ function Login() {
               required
             />
           </div>
-          
-          <button type="submit" className="auth-button">Login</button>
+
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
+          </button>
         </form>
-        
+
         <p className="auth-link">
           Don't have an account? <Link to="/register">Register here</Link>
         </p>
