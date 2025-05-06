@@ -67,7 +67,7 @@ const Profile = () => {
         console.error('No authentication token available');
         return;
       }
-      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile', {
+      const response = await axios.get('https://ai-powered-study-buddy-mono-repo.onrender.com/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfile(response.data);
@@ -99,7 +99,7 @@ const Profile = () => {
         userId: currentUser?.id || "507f1f77bcf86cd799439011" // Use a default ID for testing
       };
 
-      await axios.put('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile', profileData, {
+      await axios.put('https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile', profileData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -180,7 +180,7 @@ const Profile = () => {
       const formData = new FormData();
       formData.append('image', imageFile);
 
-      const response = await axios.post('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/upload-image', formData, {
+      const response = await axios.post('https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
@@ -222,7 +222,7 @@ const Profile = () => {
         return;
       }
 
-      await axios.delete('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/image', {
+      await axios.delete('https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/image', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -252,7 +252,7 @@ const Profile = () => {
         return;
       }
 
-      await axios.put('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/preferences', preferencesData, {
+      await axios.put('https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/preferences', preferencesData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

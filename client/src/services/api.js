@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://https://ai-powered-study-buddy-mono-repo.onrender.com/api';
+const API_URL = 'https://ai-powered-study-buddy-mono-repo.onrender.com/api';
 
 // Create axios instance with base URL
 const api = axios.create({
@@ -23,26 +23,26 @@ api.interceptors.request.use(
 export const gamificationApi = {
   // Get all gamification data
   getAll: () => api.get('/gamification'),
-  
+
   // Get user's gamification data
   getUserData: (userId) => api.get(`/gamification/user/${userId}`),
-  
+
   // Update user progress
   updateProgress: (userId, progressData) => api.patch(`/gamification/${userId}/progress`, progressData),
-  
+
   // Update achievements
   updateAchievements: (userId, achievements) => api.patch(`/gamification/${userId}/achievements`, achievements),
-  
+
   // Update a single achievement
-  updateAchievement: (userId, achievementId, achievementData) => 
+  updateAchievement: (userId, achievementId, achievementData) =>
     api.patch(`/gamification/${userId}/achievements/${achievementId}`, achievementData),
-  
+
   // Update study stats
   updateStats: (userId, statsData) => api.patch(`/gamification/${userId}/stats`, statsData),
-  
+
   // Update points
   updatePoints: (userId, points) => api.patch(`/gamification/${userId}/points`, { points }),
-  
+
   // Add badge
   addBadge: (userId, badge) => api.patch(`/gamification/${userId}/badges`, { badge }),
 };

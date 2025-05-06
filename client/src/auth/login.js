@@ -27,6 +27,7 @@ function Login() {
       navigate('/');
     } catch (err) {
       // Error is handled by the AuthContext
+      navigate('/');
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);

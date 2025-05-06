@@ -16,7 +16,7 @@ const Flashcards = () => {
 
   const fetchFlashcards = async () => {
     try {
-      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/flashcards');
+      const response = await axios.get('https://ai-powered-study-buddy-mono-repo.onrender.com/api/flashcards');
       setFlashcardSets(response.data);
     } catch (error) {
       console.error('Error fetching flashcards:', error);
@@ -26,7 +26,7 @@ const Flashcards = () => {
   const handleCreateSet = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/flashcards', {
+      await axios.post('https://ai-powered-study-buddy-mono-repo.onrender.com/api/flashcards', {
         ...newSet,
         user_id: "507f1f77bcf86cd799439011"
       });
@@ -55,7 +55,7 @@ const Flashcards = () => {
             value={newSet.subject}
             onChange={(e) => setNewSet({ ...newSet, subject: e.target.value })}
           />
-          
+
           {newSet.questions.map((q, index) => (
             <div key={index} className="question-input">
               <input
@@ -92,7 +92,7 @@ const Flashcards = () => {
               </select>
             </div>
           ))}
-          
+
           <button type="button" onClick={addQuestion}>Add Question</button>
           <button type="submit">Create Set</button>
         </form>

@@ -33,7 +33,7 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/dashboard');
+      const response = await axios.get('https://ai-powered-study-buddy-mono-repo.onrender.com/api/dashboard');
       setSummary(response.data);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);

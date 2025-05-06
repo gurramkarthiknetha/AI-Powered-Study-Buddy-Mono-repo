@@ -35,7 +35,7 @@ const Performance = () => {
   const fetchPerformanceData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/performance');
+      const response = await axios.get('https://ai-powered-study-buddy-mono-repo.onrender.com/api/performance');
       setStatistics(response.data);
     } catch (error) {
       console.error('Error fetching performance data:', error);
