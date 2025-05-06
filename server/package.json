@@ -9,8 +9,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm install --legacy-peer-deps && mkdir -p public && echo '{}' > public/build-info.json"
+    "vercel-build": "npm install --legacy-peer-deps",
+    "build": "npm install --legacy-peer-deps && mkdir -p public && echo '{\"version\": \"1.0.0\", \"buildTime\": \"2024-07-01T00:00:00Z\", \"environment\": \"production\" }' > public/build-info.json"
   },
+  "main": "index.js",
   "peerDependencies": {
     "typescript": "^5"
   },
