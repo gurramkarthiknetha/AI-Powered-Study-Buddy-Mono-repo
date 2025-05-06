@@ -7,7 +7,9 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "npm install --legacy-peer-deps"
   },
   "peerDependencies": {
     "typescript": "^5"
