@@ -14,6 +14,8 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('personal');
   const [imageFile, setImageFile] = useState(null);
+  // imagePreview is used in the image upload flow but not rendered in the UI
+  // eslint-disable-next-line no-unused-vars
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
@@ -65,7 +67,7 @@ const Profile = () => {
         console.error('No authentication token available');
         return;
       }
-      const response = await axios.get('http://localhost:8000/api/profile', {
+      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfile(response.data);
@@ -97,7 +99,7 @@ const Profile = () => {
         userId: currentUser?.id || "507f1f77bcf86cd799439011" // Use a default ID for testing
       };
 
-      await axios.put('http://localhost:8000/api/profile', profileData, {
+      await axios.put('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile', profileData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -178,7 +180,7 @@ const Profile = () => {
       const formData = new FormData();
       formData.append('image', imageFile);
 
-      const response = await axios.post('http://localhost:8000/api/profile/upload-image', formData, {
+      const response = await axios.post('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
@@ -220,7 +222,7 @@ const Profile = () => {
         return;
       }
 
-      await axios.delete('http://localhost:8000/api/profile/image', {
+      await axios.delete('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/image', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -236,6 +238,8 @@ const Profile = () => {
     }
   };
 
+  // Function for updating user preferences - will be used in future implementation
+  // eslint-disable-next-line no-unused-vars
   const updatePreferences = async (preferencesData) => {
     setIsSaving(true);
     setError(null);
@@ -248,7 +252,7 @@ const Profile = () => {
         return;
       }
 
-      await axios.put('http://localhost:8000/api/profile/preferences', preferencesData, {
+      await axios.put('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/profile/preferences', preferencesData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -16,7 +16,7 @@ const Flashcards = () => {
 
   const fetchFlashcards = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/flashcards');
+      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/flashcards');
       setFlashcardSets(response.data);
     } catch (error) {
       console.error('Error fetching flashcards:', error);
@@ -26,7 +26,7 @@ const Flashcards = () => {
   const handleCreateSet = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8000/api/flashcards', {
+      await axios.post('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/flashcards', {
         ...newSet,
         user_id: "507f1f77bcf86cd799439011"
       });

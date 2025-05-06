@@ -147,7 +147,7 @@ const Pomodoro = () => {
 
   const fetchSessions = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/pomodoro');
+      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/pomodoro');
       setSessions(response.data);
     } catch (error) {
       console.error('Error fetching sessions:', error);
@@ -206,7 +206,7 @@ const Pomodoro = () => {
 
     // Save session to backend
     try {
-      await axios.post('http://localhost:8000/api/pomodoro', {
+      await axios.post('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/pomodoro', {
         user_id: "507f1f77bcf86cd799439011",
         start_time: new Date(Date.now() - (timerType === 'pomodoro' ? settings.pomodoro : timerType === 'shortBreak' ? settings.shortBreak : settings.longBreak) * 60 * 1000),
         end_time: new Date(),

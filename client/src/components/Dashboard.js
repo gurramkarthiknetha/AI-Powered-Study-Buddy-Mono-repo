@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useUser } from "../contexts/UserContext";
-import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -16,7 +15,7 @@ const Dashboard = () => {
     streak: 0
   });
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [upcomingEvents, setUpcomingEvents] = useState([
+  const [upcomingEvents] = useState([
     { title: "Math Study Session", time: "Today, 3:00 PM" },
     { title: "Physics Assignment Due", time: "Tomorrow, 11:59 PM" }
   ]);
@@ -34,7 +33,7 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/dashboard');
+      const response = await axios.get('http://https://ai-powered-study-buddy-mono-repo.onrender.com/api/dashboard');
       setSummary(response.data);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);

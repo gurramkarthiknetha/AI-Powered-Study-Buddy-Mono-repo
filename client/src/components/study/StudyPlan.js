@@ -21,7 +21,8 @@ import {
 } from 'react-icons/fa';
 import './StudyPlan.css';
 
-const API_URL = 'http://localhost:8000/api';
+// Use environment-based API URL
+const API_URL = process.env.REACT_APP_API_URL || 'http://https://ai-powered-study-buddy-mono-repo.onrender.com/api';
 
 const StudyPlan = () => {
   const { currentUser } = useAuth();
@@ -37,6 +38,8 @@ const StudyPlan = () => {
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showMilestoneForm, setShowMilestoneForm] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  // selectedSession is set in handleEventClick but not used elsewhere in the UI
+  // eslint-disable-next-line no-unused-vars
   const [selectedSession, setSelectedSession] = useState(null);
 
   // Form states

@@ -7,7 +7,7 @@ const Notes = () => {
   const [activeNote, setActiveNote] = useState(null);
   const [noteContent, setNoteContent] = useState('');
   const [noteTitle, setNoteTitle] = useState('');
-  const [folders, setFolders] = useState(['General', 'Math', 'Science', 'History']);
+  const [folders] = useState(['General', 'Math', 'Science', 'History']);
   const [activeFolder, setActiveFolder] = useState('General');
   const [isEditing, setIsEditing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -46,13 +46,13 @@ const Notes = () => {
 
   const handleSaveNote = () => {
     if (!activeNote) return;
-    
-    const updatedNotes = notes.map(note => 
-      note.id === activeNote.id 
-        ? { ...note, title: noteTitle, content: noteContent } 
+
+    const updatedNotes = notes.map(note =>
+      note.id === activeNote.id
+        ? { ...note, title: noteTitle, content: noteContent }
         : note
     );
-    
+
     setNotes(updatedNotes);
     setActiveNote({ ...activeNote, title: noteTitle, content: noteContent });
     setIsEditing(false);
@@ -61,7 +61,7 @@ const Notes = () => {
   const handleDeleteNote = (noteId) => {
     const updatedNotes = notes.filter(note => note.id !== noteId);
     setNotes(updatedNotes);
-    
+
     if (activeNote && activeNote.id === noteId) {
       setActiveNote(null);
       setNoteContent('');
@@ -73,35 +73,35 @@ const Notes = () => {
     setActiveFolder(folder);
   };
 
-  const filteredNotes = notes.filter(note => 
-    note.folder === activeFolder && 
-    (searchTerm === '' || 
-     note.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredNotes = notes.filter(note =>
+    note.folder === activeFolder &&
+    (searchTerm === '' ||
+     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
      note.content.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // Simple markdown-like rendering
   const renderContent = (content) => {
     if (!content) return '';
-    
+
     // Replace headers
     let rendered = content.replace(/^# (.+)$/gm, '<h1>$1</h1>');
     rendered = rendered.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-    
+
     // Replace lists
     rendered = rendered.replace(/^- (.+)$/gm, '<li>$1</li>');
     rendered = rendered.replace(/^(\d+)\. (.+)$/gm, '<li>$1. $2</li>');
-    
+
     // Replace paragraphs
-    rendered = rendered.split('\n\n').map(para => 
-      !para.startsWith('<h') && !para.startsWith('<li') 
-        ? `<p>${para}</p>` 
+    rendered = rendered.split('\n\n').map(para =>
+      !para.startsWith('<h') && !para.startsWith('<li')
+        ? `<p>${para}</p>`
         : para
     ).join('');
-    
+
     // Wrap lists
     rendered = rendered.replace(/(<li>.+<\/li>)+/g, '<ul>$&</ul>');
-    
+
     return rendered;
   };
 
@@ -109,20 +109,20 @@ const Notes = () => {
     <div className="notes-container">
       <div className="notes-sidebar">
         <div className="notes-search">
-          <input 
-            type="text" 
-            placeholder="Search notes..." 
+          <input
+            type="text"
+            placeholder="Search notes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="folders-section">
           <h3>Folders</h3>
           <ul className="folders-list">
             {folders.map(folder => (
-              <li 
-                key={folder} 
+              <li
+                key={folder}
                 className={activeFolder === folder ? 'active' : ''}
                 onClick={() => handleFolderSelect(folder)}
               >
@@ -131,27 +131,27 @@ const Notes = () => {
             ))}
           </ul>
         </div>
-        
+
         <div className="notes-list-header">
           <h3>Notes</h3>
           <button className="icon-button" onClick={handleNewNote}>
             <FaPlus />
           </button>
         </div>
-        
+
         <ul className="notes-list">
           {filteredNotes.map(note => (
-            <li 
-              key={note.id} 
+            <li
+              key={note.id}
               className={activeNote && activeNote.id === note.id ? 'active' : ''}
               onClick={() => handleNoteSelect(note)}
             >
               <div className="note-item-header">
-                <FaFile /> 
+                <FaFile />
                 <span className="note-title">{note.title}</span>
               </div>
               <div className="note-item-actions">
-                <button 
+                <button
                   className="icon-button small"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -165,14 +165,14 @@ const Notes = () => {
           ))}
         </ul>
       </div>
-      
+
       <div className="notes-editor">
         {activeNote ? (
           <>
             <div className="editor-header">
               {isEditing ? (
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={noteTitle}
                   onChange={(e) => setNoteTitle(e.target.value)}
                   className="note-title-input"
@@ -180,7 +180,7 @@ const Notes = () => {
               ) : (
                 <h2>{activeNote.title}</h2>
               )}
-              
+
               <div className="editor-actions">
                 {isEditing ? (
                   <button className="btn" onClick={handleSaveNote}>Save</button>
@@ -194,20 +194,20 @@ const Notes = () => {
                 </button>
               </div>
             </div>
-            
+
             <div className="editor-date">
               Last edited: {activeNote.createdAt.toLocaleDateString()}
             </div>
-            
+
             {isEditing ? (
-              <textarea 
+              <textarea
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
                 className="note-content-editor"
                 placeholder="Write your note here... (Supports basic Markdown)"
               />
             ) : (
-              <div 
+              <div
                 className="note-content-preview"
                 dangerouslySetInnerHTML={{ __html: renderContent(noteContent) }}
               />
@@ -223,7 +223,7 @@ const Notes = () => {
           </div>
         )}
       </div>
-      
+
       <div className="notes-resources">
         <h3>Resources</h3>
         <div className="upload-section">
@@ -232,7 +232,7 @@ const Notes = () => {
           </button>
           <p>Upload PDFs, images, or other study materials</p>
         </div>
-        
+
         <div className="resources-list">
           <div className="resource-item">
             <FaFile /> Physics Textbook.pdf
