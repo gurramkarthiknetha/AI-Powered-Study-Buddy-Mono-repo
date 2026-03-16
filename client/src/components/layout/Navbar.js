@@ -23,6 +23,13 @@ const Navbar = ({ theme, toggleTheme }) => {
   const { user } = useUser();
   const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const placeholderImage = 'https://via.placeholder.com/150';
+
+  const profileImageSrc =
+    user?.profileImageUrl ||
+    user?.avatar ||
+    user?.profileImage?.url ||
+    placeholderImage;
 
   const isActive = (path) => location.pathname === path;
 
@@ -40,7 +47,15 @@ const Navbar = ({ theme, toggleTheme }) => {
       </div>
 
       <div className="nav-profile">
-        <img src={user?.profileImageUrl || "https://via.placeholder.com/150"} alt="Profile" className="profile-pic" />
+        <img
+          src={profileImageSrc}
+          alt="Profile"
+          className="profile-pic"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = placeholderImage;
+          }}
+        />
         <h3>{user?.name || "User"}</h3>
         <div className="desktop-theme-toggle">
           <ThemeToggle theme={theme} toggleTheme={toggleTheme} />

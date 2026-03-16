@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { UserProvider } from './contexts/UserContext';
 import Navbar from './components/layout/Navbar';
@@ -19,11 +19,40 @@ import './App.css';
 function PrivateRoute({ children }) {
   const { currentUser, loading } = useAuth();
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
+  if (loading) return <div className="loading">Loading...</div>;
 
-  return currentUser ? children : <Navigate to="/login" />;
+  const storedToken = localStorage.getItem('token');
+  const storedUserId = localStorage.getItem('userId');
+  const isAuthenticated = Boolean(currentUser || (storedToken && storedUserId));
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
+
+// Handles the redirect back from Google OAuth
+function OAuthCallback() {
+  const { handleOAuthCallback } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const userId = params.get('userId');
+    const name = params.get('name');
+    const email = params.get('email');
+    const avatar = params.get('avatar') || '';
+
+    if (token && userId) {
+      handleOAuthCallback(token, userId, name, email, avatar);
+
+      // Force a clean route change after persisting auth to avoid transient state races.
+      window.history.replaceState({}, document.title, '/');
+      navigate('/', { replace: true });
+    } else {
+      navigate('/login', { replace: true });
+    }
+  }, [handleOAuthCallback, navigate]);
+
+  return <div className="loading">Signing you in...</div>;
 }
 
 function App() {
@@ -46,6 +75,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth/callback" element={<OAuthCallback />} />
               <Route path="/*" element={
                 <PrivateRouteWrapper>
                   <Navbar theme={theme} toggleTheme={toggleTheme} />
@@ -72,7 +102,6 @@ function App() {
   );
 }
 
-// Wrapper component to handle private routes
 function PrivateRouteWrapper({ children }) {
   return (
     <PrivateRoute>

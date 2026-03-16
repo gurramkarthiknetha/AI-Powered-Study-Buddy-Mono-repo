@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authApi } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -11,72 +10,42 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Check if user is already logged in
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('userName');
     const userEmail = localStorage.getItem('userEmail');
+    const userAvatar = localStorage.getItem('userAvatar');
 
     if (token && userId) {
       setCurrentUser({
         id: userId,
         name: userName,
         email: userEmail,
-        token
+        token,
+        avatar: userAvatar,
+        profileImageUrl: userAvatar
       });
     }
-    
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      setError(null);
-      const response = await authApi.login({ email, password });
-      const { token, userId, name, email: userEmail } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('userName', name);
-      localStorage.setItem('userEmail', userEmail);
-      
-      setCurrentUser({
-        id: userId,
-        name,
-        email: userEmail,
-        token
-      });
-      
-      return response.data;
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-      throw err;
-    }
-  };
-
-  const register = async (name, email, password) => {
-    try {
-      setError(null);
-      const response = await authApi.register({ name, email, password });
-      const { token, userId } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('userName', name);
-      localStorage.setItem('userEmail', email);
-      
-      setCurrentUser({
-        id: userId,
-        name,
-        email,
-        token
-      });
-      
-      return response.data;
-    } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
-      throw err;
-    }
+  // Called after Google OAuth redirect with URL params
+  const handleOAuthCallback = (token, userId, name, email, avatar = '') => {
+    setError(null);
+    localStorage.setItem('token', token);
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('userName', name);
+    localStorage.setItem('userEmail', email);
+    localStorage.setItem('userAvatar', avatar || '');
+    setCurrentUser({
+      id: userId,
+      name,
+      email,
+      token,
+      avatar,
+      profileImageUrl: avatar
+    });
+    setLoading(false);
   };
 
   const logout = () => {
@@ -84,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userAvatar');
     setCurrentUser(null);
   };
 
@@ -91,8 +61,7 @@ export const AuthProvider = ({ children }) => {
     currentUser,
     loading,
     error,
-    login,
-    register,
+    handleOAuthCallback,
     logout
   };
 
@@ -104,3 +73,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
+

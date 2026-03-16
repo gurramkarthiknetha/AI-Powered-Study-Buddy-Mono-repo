@@ -1,136 +1,95 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import jwt from 'jsonwebtoken';
 import User from '../models/students.js';
 
 const router = express.Router();
 
-// Test endpoint to verify API is accessible
-router.get('/test', (req, res) => {
-  res.json({ message: 'Auth API is working', timestamp: new Date().toISOString() });
-});
-
-// Register
-router.post('/register', async (req, res) => {
+// Configure Google OAuth Strategy
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL
+}, async (accessToken, refreshToken, profile, done) => {
   try {
-    console.log('Registration request received:', req.body);
-    const { name, email, password } = req.body;
+    let user = await User.findOne({ email: profile.emails[0].value });
 
-    // Validate input
-    if (!name || !email || !password) {
-      console.log('Missing required fields:', { name: !!name, email: !!email, password: !!password });
-      return res.status(400).json({ message: 'Please provide name, email, and password' });
-    }
-
-    // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
-      console.log('User already exists with email:', email);
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
-    user = await User.create({
-      name,
-      email,
-      password_hash: hashedPassword,
-      role: 'student'
-    });
-
-    console.log('User created successfully:', { id: user._id, email: user.email });
-
-    // Create token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '24h' }
-    );
-
-    const responseData = {
-      token,
-      userId: user._id,
-      name: user.name,
-      email: user.email
-    };
-
-    console.log('Sending registration success response');
-    res.status(201).json(responseData);
-  } catch (error) {
-    console.error('Registration error details:', error);
-
-    // Provide more specific error messages based on the error type
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({
-        message: 'Validation error',
-        details: Object.values(error.errors).map(err => err.message)
+    if (!user) {
+      user = await User.create({
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        googleId: profile.id,
+        avatar: profile.photos?.[0]?.value || '',
+        role: 'student'
       });
+    } else if (!user.googleId) {
+      user.googleId = profile.id;
+      if (!user.avatar && profile.photos?.[0]?.value) {
+        user.avatar = profile.photos[0].value;
+      }
+      await user.save();
     }
 
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'Email already in use' });
-    }
+    return done(null, user);
+  } catch (error) {
+    return done(error, null);
+  }
+}));
 
-    res.status(500).json({
-      message: 'Server error during registration',
-      error: error.message
-    });
+passport.serializeUser((user, done) => done(null, user._id));
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
   }
 });
 
-// Login
-router.post('/login', async (req, res) => {
-  try {
-    console.log('Login request received:', { email: req.body.email });
-    const { email, password } = req.body;
+// Initiate Google OAuth
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-    // Validate input
-    if (!email || !password) {
-      console.log('Missing required fields:', { email: !!email, password: !!password });
-      return res.status(400).json({ message: 'Please provide email and password' });
-    }
-
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      console.log('User not found with email:', email);
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    // Verify password
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      console.log('Password does not match for user:', email);
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    console.log('User authenticated successfully:', { id: user._id, email: user.email });
-
-    // Create token
+// Google OAuth callback
+router.get('/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3223'}/login?error=auth_failed`
+  }),
+  (req, res) => {
+    const user = req.user;
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '24h' }
     );
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:3223';
+    res.redirect(
+      `${clientUrl}/auth/callback?token=${token}&userId=${user._id}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}&avatar=${encodeURIComponent(user.avatar || '')}`
+    );
+  }
+);
 
-    const responseData = {
-      token,
-      userId: user._id,
-      name: user.name,
-      email: user.email
-    };
+// Logout
+router.get('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) console.error('Logout error:', err);
+    res.json({ message: 'Logged out successfully' });
+  });
+});
 
-    console.log('Sending login success response');
-    res.json(responseData);
+// Get current user from JWT
+router.get('/me', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const user = await User.findById(decoded.userId).select('-password_hash');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ userId: user._id, name: user.name, email: user.email, avatar: user.avatar });
   } catch (error) {
-    console.error('Login error details:', error);
-    res.status(500).json({
-      message: 'Server error during login',
-      error: error.message
-    });
+    res.status(401).json({ message: 'Invalid token' });
   }
 });
 

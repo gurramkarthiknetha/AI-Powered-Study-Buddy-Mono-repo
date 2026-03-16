@@ -1,0 +1,35 @@
+# OS files
+.DS_Store
+
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build artifacts
+client/build/
+server/dist/
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Environment files
+.env
+.env.*
+client/.env
+client/.env.*
+server/.env
+server/.env.*
+
+# Local caches
+.eslintcache
+.cache/
+
+# Accidental exported login page assets
+client/public/login_files/
+client/public/login.html

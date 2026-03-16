@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import session from 'express-session';
+import passport from 'passport';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { connectToDB, mongoose } from './db.js';
@@ -29,16 +31,26 @@ const io = new Server(httpServer, {
     credentials: true
   }
 });
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 6223;
 
 // Use a more permissive CORS policy for testing
 app.use(cors({
-  origin: '*', // Allow all origins for testing
+  origin: [process.env.CLIENT_URL || 'http://localhost:3223', '*'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 app.use(express.json());
+
+// Session middleware (required by passport for OAuth)
+app.use(session({
+  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'session-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Base route and health check
 app.get('/', (req, res) => {

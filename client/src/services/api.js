@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://ai-powered-study-buddy-mono-repo.onrender.com/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:6223/api';
 
 // Create axios instance with base URL
 const api = axios.create({
@@ -73,8 +73,8 @@ export const performanceApi = {
 
 // Auth API calls
 export const authApi = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
+  getMe: () => api.get('/auth/me'),
+  logout: () => api.get('/auth/logout'),
 };
 
 export default api;
